@@ -6,7 +6,7 @@ Created on 2013-5-21
 '''
 from django.contrib import admin;
 from qi.models import *;
-# add a line to test 2013-06-02 
+# add a line to test 2013-06-02 (to del)
 
 class CatalogAmin(admin.ModelAdmin):
     actions_on_top = True;
