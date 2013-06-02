@@ -128,7 +128,7 @@ class UserChoiceAdmin(admin.ModelAdmin):
     actions_on_bottom = True;
     actions_selection_counter = True
     fieldsets = (
-        ('基本信息', {'fields': ('userquestion', 'choice', 'text', 'grade', 'ord')}), 
+        ('基本信息', {'fields': ('userquestion', 'choice', 'text', 'grade', 'ord')}),
         ('状态信息', {'fields': ('state', 'create_date', 'modify_date')}),
     )
     list_display = ('userquestion', 'choice', 'text', 'grade', 'ord', 'state', 'create_date', 'modify_date')
@@ -142,9 +142,9 @@ admin.site.register(Question, QuestionAdmin);
 admin.site.register(ChoiceType, ChoiceTypeAdmin);
 admin.site.register(Choice, ChoiceAdmin);
 admin.site.register(User, UserAdmin);
-#admin.site.register(UserPaper, UserPaperAdmin);
-#admin.site.register(UserQuestion, UserQuestionAdmin);
-#admin.site.register(UserChoice, UserChoiceAdmin);
+# admin.site.register(UserPaper, UserPaperAdmin);
+# admin.site.register(UserQuestion, UserQuestionAdmin);
+# admin.site.register(UserChoice, UserChoiceAdmin);
 
 
 
