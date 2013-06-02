@@ -4,6 +4,9 @@ Created on 2013-5-21
 
 @author:  
 '''
+
+# change for test 222
+
 from django.contrib import admin;
 from qi.models import *;
 
