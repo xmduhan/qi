@@ -2,7 +2,7 @@
 '''
 Created on 2013-5-21
 
-@author: 
+@author:  
 '''
 from django.contrib import admin;
 from qi.models import *;
