@@ -1,0 +1,1 @@
+[{"pk": 1, "model": "school.class", "fields": {"name": "class1"}}, {"pk": 1, "model": "school.teacher", "fields": {"glass": true, "name": "A english teacher", "birthdate": "2013-05-21T05:17:54Z", "teachclass": [1]}}, {"pk": 1, "model": "school.englishteacher", "fields": {"EnglishGrade": "H", "teachclass": [1]}}]
