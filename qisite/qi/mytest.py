@@ -130,10 +130,13 @@ from django.db.models import F;
 
 
 
-c = Catalog.objects.get(id=41);
-cp = c.catalogpaper_set.all();
-for p in cp :
-    print(p.paper.name)
+#c = Catalog.objects.get(id=41);
+#cp = c.catalogpaper_set.all();
+#for p in cp :
+#    print(p.paper.name)
+
+print(Paper.objects.filter(catalogpaper__catalog__code = 'public'));
+
 
 
 
