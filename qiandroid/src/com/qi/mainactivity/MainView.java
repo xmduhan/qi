@@ -103,35 +103,7 @@ public class MainView extends RelativeLayout {
 			// TODO Auto-generated method stub
 			contentPanel.removeAllViews();
 			contentPanel.addView(userStatusView);
-			setButtonsStatus("button4");
-
-			log("test begin");
-			// JSONObject param = new JSONObject();
-			try {
-				HttpPost request = new HttpPost("http://duhan.dlinkddns.com.cn:20000/qi/service/getCatalogPaper");
-				HttpResponse httpResponse = new DefaultHttpClient().execute(request);
-				String ret = EntityUtils.toString(httpResponse.getEntity());
-				// JSONObject result = new JSONObject(ret);
-				JSONArray r1 = new JSONArray(ret);
-				for (int i = 0; i < r1.length(); i++) {
-					log("i=" + i);
-					JSONObject obj = (JSONObject) r1.get(i);
-					log((String) obj.get("model"));
-					JSONObject fields = (JSONObject) obj.get("fields");
-					log((String)fields.get("state"));
-					log((String)fields.get("name"));
-				}
-				// r1.length();
-				// log("r1.length()=" + r1.length());
-				// log(result.toString());
-				// log(ret);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				// e.printStackTrace();
-				log("error:" + e.toString());
-				log("error!");
-			}
-			log("test end");
+			setButtonsStatus("button4");			
 		}
 
 		private JSONArray JSONArray(String ret) {

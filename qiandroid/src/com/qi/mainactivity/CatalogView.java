@@ -1,5 +1,20 @@
 package com.qi.mainactivity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.qi.mainactivity.MainView.Button1Listener;
 import com.qi.mainactivity.MainView.Button2Listener;
 import com.qi.mainactivity.MainView.Button3Listener;
@@ -12,7 +27,9 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
 import android.widget.RelativeLayout.LayoutParams;
 
 public class CatalogView extends RelativeLayout {
@@ -28,6 +45,8 @@ public class CatalogView extends RelativeLayout {
 	public Button button4;
 	public Button button5;
 	public Button button6;
+
+	public ListView listview;
 
 	int buttonCount = 6;
 	int buttonColor = 0xffC0C0C0;
@@ -59,10 +78,56 @@ public class CatalogView extends RelativeLayout {
 		}
 	}
 
+	public void additem(List<Map<String, Object>> list, String name, String value) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("name", name);
+		map.put("value", value);
+		list.add(map);
+	}
+
+	public List<Map<String, Object>> getList(String catalogCode) {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		try {
+			// 创建request变量
+			// HttpPost request = new
+			// HttpPost("http://192.168.0.109:8080/qi/service/getCatalogPaper");
+			HttpPost request = new HttpPost("http://duhan.dlinkddns.com.cn:20000/qi/service/getCatalogPaper");
+			// 为request添加post参数
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+			nameValuePairs.add(new BasicNameValuePair("CatalogCode", catalogCode));
+			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			// 执行并获得返回结果
+			HttpResponse httpResponse = new DefaultHttpClient().execute(request);
+			String ret = EntityUtils.toString(httpResponse.getEntity());
+			JSONArray r1 = new JSONArray(ret);
+			for (int i = 0; i < r1.length(); i++) {
+				JSONObject obj = (JSONObject) r1.get(i);
+				JSONObject fields = (JSONObject) obj.get("fields");
+				additem(list, (String) fields.get("name"), "string");
+			}
+		} catch (Exception e) {
+			log("error:" + e.toString());
+		}
+		return list;
+	}
+
+	public void refreshListView(String catalogCode) {
+		List<Map<String, Object>> list = getList(catalogCode);
+		SimpleAdapter simpleAdapter = new SimpleAdapter(//
+				context,// Context context
+				(List) list, // List<? extends Map<String, ?>> data
+				android.R.layout.simple_list_item_2,// int resource
+				new String[] { "name", "value" },// String[] from
+				new int[] { android.R.id.text1 }// int[] to
+		);
+		listview.setAdapter(simpleAdapter);
+	}
+
 	class Button1Listener implements Button.OnClickListener {
 		@Override
 		public void onClick(View arg0) {
 			setButtonsStatus("button1");
+			refreshListView("headlines");
 		}
 	};
 
@@ -70,6 +135,7 @@ public class CatalogView extends RelativeLayout {
 		@Override
 		public void onClick(View arg0) {
 			setButtonsStatus("button2");
+			refreshListView("society");
 		}
 	}
 
@@ -77,6 +143,7 @@ public class CatalogView extends RelativeLayout {
 		@Override
 		public void onClick(View arg0) {
 			setButtonsStatus("button3");
+			refreshListView("commerce");
 		}
 	}
 
@@ -84,6 +151,7 @@ public class CatalogView extends RelativeLayout {
 		@Override
 		public void onClick(View arg0) {
 			setButtonsStatus("button4");
+			refreshListView("undergraduate");
 		}
 	}
 
@@ -91,6 +159,7 @@ public class CatalogView extends RelativeLayout {
 		@Override
 		public void onClick(View arg0) {
 			setButtonsStatus("button5");
+			refreshListView("culture");
 		}
 	}
 
@@ -98,6 +167,7 @@ public class CatalogView extends RelativeLayout {
 		@Override
 		public void onClick(View arg0) {
 			setButtonsStatus("button6");
+			refreshListView("public");
 		}
 	}
 
@@ -123,6 +193,7 @@ public class CatalogView extends RelativeLayout {
 		button4 = new Button(context);
 		button5 = new Button(context);
 		button6 = new Button(context);
+		listview = new ListView(context);
 		/*-------------------------------------------*
 		 *              设置Catalog属性                                       *
 		 *-------------------------------------------*/
@@ -133,7 +204,7 @@ public class CatalogView extends RelativeLayout {
 		 *       设置buttonPanel和contentPanel        *
 		 *-------------------------------------------*/
 		// 设置buttonPanel属性
-		RelativeLayout.LayoutParams btnPanelLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, 50);
+		RelativeLayout.LayoutParams btnPanelLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, 55);
 		buttonPanel.setLayoutParams(btnPanelLayout);
 		buttonPanel.setBackgroundColor(buttonPanelColor);
 		buttonPanel.setId(1);
@@ -156,7 +227,7 @@ public class CatalogView extends RelativeLayout {
 		button1.setLayoutParams(button1Layout);
 		// button1Layout.topMargin = 5;
 		button1.setText("热门");
-		button1.setTextSize(10);
+		button1.setTextSize(14);
 		button1.setBackgroundColor(buttonColor);
 		button1.setId(3);
 		// 设置button2的属性
@@ -164,7 +235,7 @@ public class CatalogView extends RelativeLayout {
 		button2.setLayoutParams(button2Layout);
 		// button2Layout.topMargin = 5;
 		button2.setText("社会");
-		button2.setTextSize(10);
+		button2.setTextSize(14);
 		button2.setBackgroundColor(buttonColor);
 		button2.setId(4);
 		// 设置button3的属性
@@ -172,7 +243,7 @@ public class CatalogView extends RelativeLayout {
 		button3.setLayoutParams(button3Layout);
 		// button3Layout.topMargin = 5;
 		button3.setText("商业");
-		button3.setTextSize(10);
+		button3.setTextSize(14);
 		button3.setBackgroundColor(buttonColor);
 		button3.setId(5);
 		// 设置button4的属性
@@ -180,7 +251,7 @@ public class CatalogView extends RelativeLayout {
 		button4.setLayoutParams(button4Layout);
 		// button4Layout.topMargin = 5;
 		button4.setText("学生");
-		button4.setTextSize(10);
+		button4.setTextSize(14);
 		button4.setBackgroundColor(buttonColor);
 		button4.setId(6);
 		// 设置button5的属性
@@ -188,7 +259,7 @@ public class CatalogView extends RelativeLayout {
 		button5.setLayoutParams(button5Layout);
 		// button5Layout.topMargin = 5;
 		button5.setText("文化");
-		button5.setTextSize(10);
+		button5.setTextSize(14);
 		button5.setBackgroundColor(buttonColor);
 		button5.setId(7);
 		// 设置button5的属性
@@ -196,7 +267,7 @@ public class CatalogView extends RelativeLayout {
 		button6.setLayoutParams(button6Layout);
 		// button6Layout.topMargin = 5;
 		button6.setText("公益");
-		button6.setTextSize(10);
+		button6.setTextSize(14);
 		button6.setBackgroundColor(buttonColor);
 		button6.setId(8);
 		// 设置按钮的相对位置
@@ -224,8 +295,17 @@ public class CatalogView extends RelativeLayout {
 		button5.setOnClickListener(new Button5Listener());
 		button6.setOnClickListener(new Button6Listener());
 		/*-------------------------------------------*
+		 *            添加listview                   *
+		 *-------------------------------------------*/
+		RelativeLayout.LayoutParams listviewLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+		listview.setLayoutParams(listviewLayout);
+		contentPanel.addView(listview);
+		// listview.setBackgroundColor(0xff00ff00);
+
+		/*-------------------------------------------*
 		 *            默认显示 热门目录下信息                           *                                                  
 		 *-------------------------------------------*/
 		setButtonsStatus("button1");
+		refreshListView("headlines");
 	}
 }
