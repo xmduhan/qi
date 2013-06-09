@@ -13,8 +13,8 @@ def test(request):
     return HttpResponse("hello");
 
 def getCatalogPaper(request):
-    code = 'public' 
-    papers = Paper.objects.filter(catalogpaper__catalog__code=code); 
-    return HttpResponse(serializers.serialize("json", papers));
+    code = request.POST["CatalogCode"]     
+    papers = Paper.objects.filter(catalogpaper__catalog__code=code) 
+    return HttpResponse(serializers.serialize("json", papers))
     
     
