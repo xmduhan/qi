@@ -1,2 +1,6 @@
 *.pyc
 /qiandroid/bin/*
+/qiandroid/.settings/*
+/qiandroid/lint.xml
+/qiandroid/src/com/qi/mainactivity/test.json
+/qisite/sqlite3.db
