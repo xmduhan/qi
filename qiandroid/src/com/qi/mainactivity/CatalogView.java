@@ -15,6 +15,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.qi.Service;
 import com.qi.mainactivity.MainView.Button1Listener;
 import com.qi.mainactivity.MainView.Button2Listener;
 import com.qi.mainactivity.MainView.Button3Listener;
@@ -77,53 +78,11 @@ public class CatalogView extends RelativeLayout {
 			log(e.toString());
 		}
 	}
-
-	public void additem(List<Map<String, Object>> list, String name, String value) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("name", name);
-		map.put("value", value);
-		list.add(map);
-	}
-
-	public List<Map<String, Object>> getList(String catalogCode) {
-		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		try {
-			// 创建request变量
-			// HttpPost request = new
-			// HttpPost("http://192.168.0.109:8080/qi/service/getCatalogPaper");
-			HttpPost request = new HttpPost("http://duhan.dlinkddns.com.cn:20000/qi/service/getCatalogPaper");
-			// 为request添加post参数
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-			nameValuePairs.add(new BasicNameValuePair("CatalogCode", catalogCode));
-			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			// 执行并获得返回结果
-			HttpResponse httpResponse = new DefaultHttpClient().execute(request);
-			String ret = EntityUtils.toString(httpResponse.getEntity());
-			JSONArray r1 = new JSONArray(ret);
-			for (int i = 0; i < r1.length(); i++) {
-				JSONObject obj = (JSONObject) r1.get(i);
-				JSONObject fields = (JSONObject) obj.get("fields");
-				additem(list, (String) fields.get("name"), "string");
-			}
-		} catch (Exception e) {
-			log("error:" + e.toString());
-		}
-		return list;
-	}
-
+    	
+    // 刷新list列表
 	public void refreshListView(String catalogCode) {
-		List<Map<String, Object>> list = getList(catalogCode);
-		/*/// ----------------------------------------------------
-		SimpleAdapter simpleAdapter = new SimpleAdapter(//
-				context,// Context context
-				(List) list, // List<? extends Map<String, ?>> data
-				android.R.layout.simple_list_item_2,// int resource
-				new String[] { "name", "value" },// String[] from
-				new int[] { android.R.id.text1 }// int[] to
-		);		
-		listview.setAdapter(simpleAdapter);
-		//*///----------------------------------------------------
-		CatalogAdapter catalogAdapter = new CatalogAdapter(list,context);
+		List<Map<String, Object>> list = Service.getCatalogPaper(catalogCode);
+		CatalogAdapter catalogAdapter = new CatalogAdapter(list, context);
 		listview.setAdapter(catalogAdapter);
 	}
 

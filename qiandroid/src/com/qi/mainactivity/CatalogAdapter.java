@@ -1,9 +1,16 @@
 package com.qi.mainactivity;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,6 +100,14 @@ public class CatalogAdapter extends BaseAdapter {
 		imageView.setLayoutParams(imageViewLayout);
 		imageView.setBackgroundColor(0xffD0D0D0);
 		imageView.setId(1);
+		try {
+			String imageUrl = (String) list.get(position).get("picture.url");
+			log("imageUrl=" + imageUrl);
+			Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
+			imageView.setImageBitmap(bitmap);
+		} catch (Exception e) {
+			log(e.toString());
+		}
 		// ----------------------------------------------------------------
 		// …˙≥…textøÿº˛1
 		TextView titleText = new TextView(context);
@@ -100,7 +115,7 @@ public class CatalogAdapter extends BaseAdapter {
 		titleTextLayout.addRule(RelativeLayout.RIGHT_OF, imageView.getId());
 		titleTextLayout.leftMargin = 10;
 		titleText.setLayoutParams(titleTextLayout);
-		//titleText.setBackgroundColor(0xffffff00);
+		// titleText.setBackgroundColor(0xffffff00);
 		titleText.setId(2);
 		titleText.setText((String) list.get(position).get("name"));
 		titleText.setTextSize(16);
@@ -112,9 +127,9 @@ public class CatalogAdapter extends BaseAdapter {
 		descTextLayout.addRule(RelativeLayout.RIGHT_OF, imageView.getId());
 		descTextLayout.leftMargin = 10;
 		descText.setLayoutParams(descTextLayout);
-		//descText.setBackgroundColor(0xff00ff00);
+		// descText.setBackgroundColor(0xff00ff00);
 		descText.setTextSize(10);
-		descText.setText("≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘≤‚ ‘");
+		descText.setText((String) list.get(position).get("description"));
 		descText.setTextColor(0xffD0D0D0);
 		// ------------------------------------------------------------------
 		itemBody.addView(imageView);
