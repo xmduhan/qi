@@ -113,14 +113,18 @@ public class CatalogView extends RelativeLayout {
 
 	public void refreshListView(String catalogCode) {
 		List<Map<String, Object>> list = getList(catalogCode);
+		/*/// ----------------------------------------------------
 		SimpleAdapter simpleAdapter = new SimpleAdapter(//
 				context,// Context context
 				(List) list, // List<? extends Map<String, ?>> data
 				android.R.layout.simple_list_item_2,// int resource
 				new String[] { "name", "value" },// String[] from
 				new int[] { android.R.id.text1 }// int[] to
-		);
+		);		
 		listview.setAdapter(simpleAdapter);
+		//*///----------------------------------------------------
+		CatalogAdapter catalogAdapter = new CatalogAdapter(list,context);
+		listview.setAdapter(catalogAdapter);
 	}
 
 	class Button1Listener implements Button.OnClickListener {
@@ -180,7 +184,6 @@ public class CatalogView extends RelativeLayout {
 
 	public CatalogView(Context context) {
 		super(context);
-		// TODO Auto-generated constructor stub
 		/*-------------------------------------------*
 		 *              设置初始化变量                                      *
 		 *-------------------------------------------*/
