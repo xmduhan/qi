@@ -48,7 +48,7 @@ public class CatalogAdapter extends BaseAdapter {
 		// TODO Auto-generated method stub
 		return list.get(position);
 	}
-
+ 
 	@Override
 	public long getItemId(int position) {
 		// TODO Auto-generated method stub
@@ -102,7 +102,7 @@ public class CatalogAdapter extends BaseAdapter {
 		imageView.setId(1);
 		try {
 			String imageUrl = (String) list.get(position).get("picture.url");
-			log("imageUrl=" + imageUrl);
+			//log("imageUrl=" + imageUrl);
 			Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
 			imageView.setImageBitmap(bitmap);
 		} catch (Exception e) {

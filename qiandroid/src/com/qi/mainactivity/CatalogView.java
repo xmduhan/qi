@@ -46,8 +46,9 @@ public class CatalogView extends RelativeLayout {
 	public Button button4;
 	public Button button5;
 	public Button button6;
-
 	public ListView listview;
+	public CatalogAdapter catalogAdapter;
+	public MyThread myThread;
 
 	int buttonCount = 6;
 	int buttonColor = 0xffC0C0C0;
@@ -58,6 +59,31 @@ public class CatalogView extends RelativeLayout {
 
 	public void log(String msg) {
 		Log.println(Log.ASSERT, "assert", msg);
+	}
+
+	public class MyThread extends Thread {
+		String catalogCode;
+
+		public MyThread(String catalogCode) {
+			super();
+			this.catalogCode = catalogCode;
+		}
+
+		@Override
+		public void run() {
+
+			//
+			List<Map<String, Object>> list = Service.getCatalogPaper(catalogCode);
+			catalogAdapter = new CatalogAdapter(list, context);
+
+			// 设置回调
+			listview.post(new Runnable() {
+				@Override
+				public void run() {
+					listview.setAdapter(catalogAdapter);
+				}
+			});
+		}
 	}
 
 	protected void setButtonsStatus(String buttonName) {
@@ -78,12 +104,23 @@ public class CatalogView extends RelativeLayout {
 			log(e.toString());
 		}
 	}
-    	
-    // 刷新list列表
+
+	// 刷新list列表
+	// public void refreshListView(String catalogCode) {
+	// List<Map<String, Object>> list = Service.getCatalogPaper(catalogCode);
+	// CatalogAdapter catalogAdapter = new CatalogAdapter(list, context);
+	// listview.setAdapter(catalogAdapter);
+	// }
 	public void refreshListView(String catalogCode) {
-		List<Map<String, Object>> list = Service.getCatalogPaper(catalogCode);
-		CatalogAdapter catalogAdapter = new CatalogAdapter(list, context);
-		listview.setAdapter(catalogAdapter);
+		// TODO refreshListView
+		listview.setAdapter(new LoadingAdapter(context));
+		myThread = new MyThread(catalogCode);
+		myThread.start();
+		// List<Map<String, Object>> list =
+		// Service.getCatalogPaper(catalogCode);
+		// log("list.size()=" + list.size());
+		// catalogAdapter = new CatalogAdapter(list, context);
+		// listview.setAdapter(catalogAdapter);
 	}
 
 	class Button1Listener implements Button.OnClickListener {
@@ -141,11 +178,8 @@ public class CatalogView extends RelativeLayout {
 		return btnWidth;
 	}
 
-	public CatalogView(Context context) {
-		super(context);
-		/*-------------------------------------------*
-		 *              设置初始化变量                                      *
-		 *-------------------------------------------*/
+	public void createcomponent(Context context) {
+		// TODO 创建所有界面控件的
 		this.context = context;
 		buttonPanel = new RelativeLayout(context);
 		contentPanel = new RelativeLayout(context);
@@ -156,35 +190,38 @@ public class CatalogView extends RelativeLayout {
 		button5 = new Button(context);
 		button6 = new Button(context);
 		listview = new ListView(context);
-		/*-------------------------------------------*
-		 *              设置Catalog属性                                       *
-		 *-------------------------------------------*/
+	}
+
+	public void setupCatalogView() {
+		// TODO 设置Catalog属性
 		// setBackgroundColor(0xffff0000);
 		RelativeLayout.LayoutParams catalogViewLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		setLayoutParams(catalogViewLayout);
-		/*-------------------------------------------*
-		 *       设置buttonPanel和contentPanel        *
-		 *-------------------------------------------*/
+	}
+
+	public void setupButtonPanel() {
 		// 设置buttonPanel属性
 		RelativeLayout.LayoutParams btnPanelLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, 55);
 		buttonPanel.setLayoutParams(btnPanelLayout);
 		buttonPanel.setBackgroundColor(buttonPanelColor);
+		btnPanelLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		buttonPanel.setId(1);
-		// 设置contentPanel属性
+		this.addView(buttonPanel);
+	}
+
+	public void setupContentPanel() {
+		// TODO 设置contentPanel属性
 		RelativeLayout.LayoutParams contentLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		contentPanel.setLayoutParams(contentLayout);
 		// contentPanel.setBackgroundColor(0xff0070f0);
 		contentPanel.setId(2);
 		// 设置buttonPanel和contentPanel的相对位置
-		btnPanelLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		contentLayout.addRule(RelativeLayout.BELOW, buttonPanel.getId());
-		// 加入bodyPanel
-		this.addView(buttonPanel);
 		this.addView(contentPanel);
-		/*-------------------------------------------*
-		 *             设置button属性                                            *
-		 *-------------------------------------------*/
-		// 设置button1的属性
+	}
+
+	public void setupButtons() {
+		// TODO 设置button1的属性
 		RelativeLayout.LayoutParams button1Layout = new RelativeLayout.LayoutParams(getButtonWidth(), LayoutParams.FILL_PARENT);
 		button1.setLayoutParams(button1Layout);
 		// button1Layout.topMargin = 5;
@@ -247,26 +284,42 @@ public class CatalogView extends RelativeLayout {
 		buttonPanel.addView(button5);
 		buttonPanel.addView(button6);
 
-		/*-------------------------------------------*
-		 *            为按钮添加监听器                                           *
-		 *-------------------------------------------*/
+		// 为按钮添加监听器
 		button1.setOnClickListener(new Button1Listener());
 		button2.setOnClickListener(new Button2Listener());
 		button3.setOnClickListener(new Button3Listener());
 		button4.setOnClickListener(new Button4Listener());
 		button5.setOnClickListener(new Button5Listener());
 		button6.setOnClickListener(new Button6Listener());
-		/*-------------------------------------------*
-		 *            添加listview                   *
-		 *-------------------------------------------*/
+	}
+
+	public void setupListView() {
+		// TODO 设置ListView属性
 		RelativeLayout.LayoutParams listviewLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		listview.setLayoutParams(listviewLayout);
 		contentPanel.addView(listview);
 		// listview.setBackgroundColor(0xff00ff00);
+	}
 
-		/*-------------------------------------------*
-		 *            默认显示 热门目录下信息                           *                                                  
-		 *-------------------------------------------*/
+	public CatalogView(Context context) {
+		super(context);
+		// 创建所有界面控件的
+		createcomponent(context);
+
+		// 设置Catalog属性
+		setupCatalogView();
+		// 设置buttonPanel属性
+		setupButtonPanel();
+		// 设置contentPanel属性
+		setupContentPanel();
+
+		// 设置button属性
+		setupButtons();
+
+		// 添加listview
+		setupListView();
+
+		// 默认切向热门目录
 		setButtonsStatus("button1");
 		refreshListView("headlines");
 	}
