@@ -6,15 +6,39 @@ Created on 2013-6-3
 '''
 from django.http import HttpResponse
 from django.core import serializers
-from models import *;
+from models import Paper
+import json
 
+def papers2Json(papers):
+    result = []
+    for paper in papers:
+        p = {}
+        p["name"] = paper.name
+        p["description"] = paper.description
+        if len(paper.picture.name) <> 0 :        
+            p["picture.url"] = paper.picture.url
+        else:
+            p["picture.url"] = ""
+        result.append(p)
+    return json.dumps(result);
 
-def test(request):    
-    return HttpResponse("hello");
+def test1(request):    
+    papers = Paper.objects.filter(catalogpaper__catalog__code="headlines") 
+    return HttpResponse(papers2Json(papers))
+
+def test2(request):    
+    papers = Paper.objects.filter(catalogpaper__catalog__code="headlines") 
+    return HttpResponse(serializers.serialize("json", papers))
+    # return HttpResponse("hello")
+
+def test3(request):    
+    papers = Paper.objects.filter(catalogpaper__catalog__code="headlines") 
+    return HttpResponse(serializers.serialize("json", papers))
+    # return HttpResponse("hello")
+
 
 def getCatalogPaper(request):
-    code = request.POST["CatalogCode"]     
-    papers = Paper.objects.filter(catalogpaper__catalog__code=code) 
-    return HttpResponse(serializers.serialize("json", papers))
+    papers = Paper.objects.filter(catalogpaper__catalog__code=request.POST["CatalogCode"]) 
+    return HttpResponse(papers2Json(papers))
     
     

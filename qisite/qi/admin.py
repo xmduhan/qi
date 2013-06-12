@@ -30,7 +30,7 @@ class PaperAmin(admin.ModelAdmin):
     actions_selection_counter = True
     list_display = ('id', 'name', 'description', 'state', 'create_date', 'modify_date')
     fieldsets = (
-        ('基本信息', {'fields': ('name', 'description')}),
+        ('基本信息', {'fields': ('name', 'description', 'picture')}),
         ('状态信息', {'fields': ('state', 'create_date', 'modify_date')}),  # 'classes':['collapse']
     )
     pass

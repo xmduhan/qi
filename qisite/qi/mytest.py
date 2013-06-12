@@ -5,9 +5,12 @@ Created on 2013-5-29
 '''
 
 from qi.models import *
-from datetime import datetime;
-from datetime import date;
-from django.db.models import F;   
+from datetime import datetime
+from datetime import date
+from django.db.models import F
+from django.core import serializers
+import json; 
+
 # add test 
 
 # print(Catalog.objects.all())
@@ -130,13 +133,39 @@ from django.db.models import F;
 
 
 
-#c = Catalog.objects.get(id=41);
-#cp = c.catalogpaper_set.all();
-#for p in cp :
+# c = Catalog.objects.get(id=41);
+# cp = c.catalogpaper_set.all();
+# for p in cp :
 #    print(p.paper.name)
 
-print(Paper.objects.filter(catalogpaper__catalog__code = 'public'));
+# print(Paper.objects.filter(catalogpaper__catalog__code = 'public'));
 
+# print(Paper.objects.get(id=43).picture);
+# print(Paper.objects.get(id=43).picture.name);
+# print(Paper.objects.get(id=43).picture.path);
+# print(Paper.objects.get(id=43).picture.url);
+
+
+
+result = []
+for paper in Paper.objects.all():
+    p = {}
+    print(paper.name);
+    p["name"] = paper.name
+    print(paper.description);
+    p["description"] = paper.description
+    if len(paper.picture.name) <> 0 :        
+        print(paper.picture.url)
+        p["picture.url"] = paper.picture.url
+    result.append(p)
+
+print(result);
+print(json.dumps(result));
+
+
+
+
+# print(paper[0]);
 
 
 

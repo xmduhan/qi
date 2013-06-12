@@ -45,6 +45,9 @@ class Paper(StateObject):
         return self.name
     name = models.CharField("问卷名称", max_length=500)
     description = models.CharField("问卷说明", max_length=1000)
+    picture = models.ImageField(upload_to="papers");
+    def picture_url (self):
+        return self.picture.url;
     class Meta:
         verbose_name = "问卷"
         verbose_name_plural = "<03>.问卷"
@@ -54,7 +57,7 @@ class Catalog(StateObject):
     def __unicode__(self):
         return self.name
     name = models.CharField(u"目录名称", max_length=500)    
-    code = models.CharField(u"目录编码", max_length=50, unique=True, null=False,blank=False)
+    code = models.CharField(u"目录编码", max_length=50, unique=True, null=False, blank=False)
     # image = models.ImageField(blank=True)
     parent = models.ForeignKey('self', blank=True, null=True, verbose_name="上级目录");    
     ord = models.IntegerField("排序号", blank=True, null=True)
