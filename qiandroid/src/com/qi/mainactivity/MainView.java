@@ -133,7 +133,7 @@ public class MainView extends RelativeLayout {
 
 	public void setupTitlePanel() {
 		// TODO 设置titlePanel属性
-		RelativeLayout.LayoutParams titleLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, 50);
+		RelativeLayout.LayoutParams titleLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, Constant.MainViewTitlePanelHeight);
 		titlePanel.setLayoutParams(titleLayout);
 		titlePanel.setBackgroundColor(titlePanelColor);
 		titleLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -152,7 +152,7 @@ public class MainView extends RelativeLayout {
 
 	public void setupButtonPanel() {
 		// TODO 设置buttonPanel属性
-		RelativeLayout.LayoutParams btnPanelLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, 60);
+		RelativeLayout.LayoutParams btnPanelLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, Constant.MainViewButtonPanelHeight);
 		buttonPanel.setLayoutParams(btnPanelLayout);
 		buttonPanel.setBackgroundColor(buttonPanelColor);
 		btnPanelLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);

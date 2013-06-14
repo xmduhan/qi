@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ public class CatalogAdapter extends BaseAdapter {
 
 	List<Map<String, Object>> list;
 	Context context;
+	ArrayList imageViewList = new ArrayList();
 
 	public CatalogAdapter(List<Map<String, Object>> list, Context context) {
 		super();
@@ -48,15 +50,61 @@ public class CatalogAdapter extends BaseAdapter {
 		// TODO Auto-generated method stub
 		return list.get(position);
 	}
- 
+
 	@Override
 	public long getItemId(int position) {
 		// TODO Auto-generated method stub
 		return position;
 	}
 
+	public void loadPicture() {
+		for (int i = 0; i < getCount(); i++) {
+			try {
+				String imageUrl = (String) list.get(i).get("picture.url");
+				// log("imageUrl=" + imageUrl);
+				Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
+				((ImageView) imageViewList.get(i)).setImageBitmap(bitmap);
+				// log("imageViewList.size()=" + imageViewList.size());
+			} catch (Exception e) {
+				log(e.toString());
+			}
+		}
+	}
+
+	public class LoadImageThread extends Thread {
+		int position;
+		ImageView imageView;
+		Bitmap bitmap;
+
+		public LoadImageThread(ImageView imageView, int position) {
+			super();
+			this.position = position;
+			this.imageView = imageView;
+		}
+		@Override
+		public void run() {
+			for (int i = 0; i < 3; i++) {
+				try {
+					String imageUrl = (String) list.get(position).get("picture.url");
+					bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
+					imageView.post(new Runnable() {
+						@Override
+						public void run() {
+							imageView.setImageBitmap(bitmap);
+						}
+					});
+					break;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					log(e.toString());
+				}
+			}
+		}
+	}
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		// log("getView(" + position + "):start");
 		// TODO Auto-generated method stub
 		RelativeLayout listItem = new RelativeLayout(context);
 		// -----------------------------------------
@@ -100,14 +148,9 @@ public class CatalogAdapter extends BaseAdapter {
 		imageView.setLayoutParams(imageViewLayout);
 		imageView.setBackgroundColor(0xffD0D0D0);
 		imageView.setId(1);
-		try {
-			String imageUrl = (String) list.get(position).get("picture.url");
-			//log("imageUrl=" + imageUrl);
-			Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
-			imageView.setImageBitmap(bitmap);
-		} catch (Exception e) {
-			log(e.toString());
-		}
+		// imageViewList.add(imageView);
+		new LoadImageThread(imageView, position).start();
+		// log("imageViewList.size()=" + imageViewList.size());
 		// ----------------------------------------------------------------
 		// Éú³Étext¿Ø¼þ1
 		TextView titleText = new TextView(context);

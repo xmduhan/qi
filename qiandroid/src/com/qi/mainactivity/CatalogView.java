@@ -48,7 +48,7 @@ public class CatalogView extends RelativeLayout {
 	public Button button6;
 	public ListView listview;
 	public CatalogAdapter catalogAdapter;
-	public MyThread myThread;
+	public LoadItemThread loadItemThread;
 
 	int buttonCount = 6;
 	int buttonColor = 0xffC0C0C0;
@@ -61,21 +61,21 @@ public class CatalogView extends RelativeLayout {
 		Log.println(Log.ASSERT, "assert", msg);
 	}
 
-	public class MyThread extends Thread {
+	public class LoadItemThread extends Thread {
 		String catalogCode;
+		ListView listview;
 
-		public MyThread(String catalogCode) {
+		public LoadItemThread(ListView listview, String catalogCode) {
 			super();
 			this.catalogCode = catalogCode;
+			this.listview = listview;
 		}
 
 		@Override
 		public void run() {
-
 			//
 			List<Map<String, Object>> list = Service.getCatalogPaper(catalogCode);
 			catalogAdapter = new CatalogAdapter(list, context);
-
 			// 设置回调
 			listview.post(new Runnable() {
 				@Override
@@ -114,13 +114,8 @@ public class CatalogView extends RelativeLayout {
 	public void refreshListView(String catalogCode) {
 		// TODO refreshListView
 		listview.setAdapter(new LoadingAdapter(context));
-		myThread = new MyThread(catalogCode);
-		myThread.start();
-		// List<Map<String, Object>> list =
-		// Service.getCatalogPaper(catalogCode);
-		// log("list.size()=" + list.size());
-		// catalogAdapter = new CatalogAdapter(list, context);
-		// listview.setAdapter(catalogAdapter);
+		loadItemThread = new LoadItemThread(listview, catalogCode);
+		loadItemThread.start();
 	}
 
 	class Button1Listener implements Button.OnClickListener {
@@ -200,8 +195,8 @@ public class CatalogView extends RelativeLayout {
 	}
 
 	public void setupButtonPanel() {
-		// 设置buttonPanel属性
-		RelativeLayout.LayoutParams btnPanelLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, 55);
+		// TODO 设置buttonPanel属性
+		RelativeLayout.LayoutParams btnPanelLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, Constant.CatalogViewButtonPanelHeight);
 		buttonPanel.setLayoutParams(btnPanelLayout);
 		buttonPanel.setBackgroundColor(buttonPanelColor);
 		btnPanelLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP);
