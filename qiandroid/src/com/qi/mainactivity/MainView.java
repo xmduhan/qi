@@ -219,6 +219,7 @@ public class MainView extends RelativeLayout {
 	}
 
 	public MainView(Context context) {
+		// TODO MainView 构造函数
 		super(context);
 		this.context = context;
 		// 创建所有空间的对象实例
