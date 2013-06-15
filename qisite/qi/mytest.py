@@ -11,6 +11,7 @@ from django.db.models import F
 from django.core import serializers
 import json; 
 
+
 # add test 
 
 # print(Catalog.objects.all())
@@ -146,7 +147,7 @@ import json;
 # print(Paper.objects.get(id=43).picture.url);
 
 
-
+'''
 result = []
 for paper in Paper.objects.all():
     p = {}
@@ -161,6 +162,28 @@ for paper in Paper.objects.all():
 
 print(result);
 print(json.dumps(result));
+'''
+
+
+
+
+# 生成并保存session（利用SessionStore）
+from django.contrib.sessions.backends.db import SessionStore
+sessionStore = SessionStore()
+sessionStore["str"] = "hello"
+sessionStore["dict"] = {}; 
+sessionStore["dict"]["key1"]="value1"
+sessionStore["dict"]["key2"]="value2"
+sessionStore.save();
+print(sessionStore.session_key);
+print(sessionStore.keys());
+session_key = sessionStore.session_key;
+# 读取保存的session
+from django.contrib.sessions.models import Session
+session = Session.objects.get(pk=session_key)
+print(session.session_data);
+print(session.get_decoded());
+print(session.expire_date);
 
 
 

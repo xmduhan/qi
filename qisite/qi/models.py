@@ -138,6 +138,7 @@ class User(StateObject):
         return self.name + "(" + self.phone + ")"
     phone = models.CharField("手机号码", max_length=50)
     name = models.CharField("用户名", max_length=50)
+    password = models.CharField("密码", max_length=100)
     class Meta:
         verbose_name = "用户"
         verbose_name_plural = "<07>.用户"
