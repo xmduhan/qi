@@ -103,13 +103,9 @@ public class MainView extends RelativeLayout {
 			// TODO Auto-generated method stub
 			contentPanel.removeAllViews();
 			contentPanel.addView(userStatusView);
-			setButtonsStatus("button4");			
+			setButtonsStatus("button4");
 		}
 
-		private JSONArray JSONArray(String ret) {
-			// TODO Auto-generated method stub
-			return null;
-		}
 	}
 
 	public int getButtonWidth() {
@@ -119,13 +115,8 @@ public class MainView extends RelativeLayout {
 		return btnWidth;
 	}
 
-	public MainView(Context context) {
-		super(context);
-		this.context = context;
-		// TODO Auto-generated constructor stub
-		/*-------------------------------------------*
-		 *               构造界面控件                                             *
-		 *-------------------------------------------*/
+	public void createComponent(Context context) {
+		// TODO 创建所有界面控件的
 		titlePanel = new RelativeLayout(context);
 		bodyPanel = new RelativeLayout(context);
 		buttonPanel = new RelativeLayout(context);
@@ -138,50 +129,49 @@ public class MainView extends RelativeLayout {
 		unfinishedPaperView = new UnfinishedPaperView(context);
 		userPaperView = new UserPaperView(context);
 		userStatusView = new UserStatusView(context);
+	}
 
-		/*-------------------------------------------*
-		 *    在MainView中加入titlePanel和bodyPanel  *
-		 *-------------------------------------------*/
-		// 设置标题栏属性
-		RelativeLayout.LayoutParams titleLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, 50);
+	public void setupTitlePanel() {
+		// TODO 设置titlePanel属性
+		RelativeLayout.LayoutParams titleLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, Constant.MainViewTitlePanelHeight);
 		titlePanel.setLayoutParams(titleLayout);
 		titlePanel.setBackgroundColor(titlePanelColor);
+		titleLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		titlePanel.setId(1);
-		// 设置bodyPanel属性
+		this.addView(titlePanel);
+	}
+
+	public void setupBodyPanel() {
+		// TODO 设置bodyPanel属性
 		RelativeLayout.LayoutParams bodyLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		bodyPanel.setLayoutParams(bodyLayout);
-		// bodyPanel.setBackgroundColor(0xff00ff00);
 		bodyPanel.setId(2);
-		// 设置titlePanel和bodyPanel的相对位置
-		titleLayout.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		bodyLayout.addRule(RelativeLayout.BELOW, titlePanel.getId());
-		// 加入mainView
-		this.addView(titlePanel);
 		this.addView(bodyPanel);
+	}
 
-		/*-------------------------------------------*
-		 * 在bodyPanel中加入buttonPanel和contentPanel *
-		 *-------------------------------------------*/
-		// 设置buttonPanel属性
-		RelativeLayout.LayoutParams btnPanelLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, 60);
+	public void setupButtonPanel() {
+		// TODO 设置buttonPanel属性
+		RelativeLayout.LayoutParams btnPanelLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, Constant.MainViewButtonPanelHeight);
 		buttonPanel.setLayoutParams(btnPanelLayout);
 		buttonPanel.setBackgroundColor(buttonPanelColor);
+		btnPanelLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		bodyPanel.addView(buttonPanel);
 		buttonPanel.setId(3);
-		// 设置contentPanel属性
+	}
+
+	public void setupContentPanel() {
+		// TODO 设置contentPanel属性
 		RelativeLayout.LayoutParams contentLayout = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		contentPanel.setLayoutParams(contentLayout);
 		// contentPanel.setBackgroundColor(0xff000f00);
 		contentPanel.setId(4);
-		// 设置buttonPanel和contentPanel的相对位置
-		btnPanelLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 		contentLayout.addRule(RelativeLayout.ABOVE, buttonPanel.getId());
-		// 加入bodyPanel
-		bodyPanel.addView(buttonPanel);
 		bodyPanel.addView(contentPanel);
+	}
 
-		/*-------------------------------------------*
-		 *        为buttonPanel添加Button            *
-		 *-------------------------------------------*/
+	public void setupButtons() {
+		// TODO 设置各按钮的属性
 		// 设置button1的属性
 		RelativeLayout.LayoutParams button1Layout = new RelativeLayout.LayoutParams(getButtonWidth(), LayoutParams.FILL_PARENT);
 		// button1Layout.topMargin = 5;
@@ -221,17 +211,32 @@ public class MainView extends RelativeLayout {
 		buttonPanel.addView(button3);
 		buttonPanel.addView(button4);
 
-		/*-------------------------------------------*
-		 *            为按钮添加监听器                                           *
-		 *-------------------------------------------*/
+		// 为按钮增加监听器
 		button1.setOnClickListener(new Button1Listener());
 		button2.setOnClickListener(new Button2Listener());
 		button3.setOnClickListener(new Button3Listener());
 		button4.setOnClickListener(new Button4Listener());
+	}
 
-		/*-------------------------------------------*
-		 *            默认显示 CatalogView            *                                                  
-		 *-------------------------------------------*/
+	public MainView(Context context) {
+		super(context);
+		this.context = context;
+		// 创建所有空间的对象实例
+		createComponent(context);
+
+		// 设置titlePanel属性
+		setupTitlePanel();
+		// 设置bodyPanel属性
+		setupBodyPanel();
+		// 设置buttonPanel属性
+		setupButtonPanel();
+		// 设置contentPanel属性
+		setupContentPanel();
+		
+		// 设置各按钮属性
+		setupButtons();
+
+		// 默认显示 CatalogView                                                              
 		contentPanel.removeAllViews();
 		contentPanel.addView(catalogView);
 		setButtonsStatus("button1");
