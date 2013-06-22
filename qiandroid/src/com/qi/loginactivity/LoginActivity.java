@@ -17,7 +17,7 @@ public class LoginActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(new MainView(this));
+		setContentView(new LoginMainView(this));
 	}
 
 }
