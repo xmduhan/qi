@@ -48,8 +48,14 @@ def getCatalogPaper(request):
     
 def userLogin(request):
     result = {}
-    phone = request.POST["phone"]
-    password = request.POST["password"]
+    try:
+        phone = request.POST["phone"]
+        password = request.POST["password"]
+    except:
+        result["errcode"] = -1;
+        result["errmsg"] = "没有提供用户名或密码";
+        return HttpResponse(json.dumps(result))
+    
     user = User.objects.filter(phone=phone);
     if user :
         if user[0].password == password:
