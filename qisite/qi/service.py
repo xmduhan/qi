@@ -6,7 +6,7 @@ Created on 2013-6-3
 '''
 from django.http import HttpResponse
 from django.core import serializers
-from models import Paper
+from models import *
 import json
 
 def papers2Json(papers):
@@ -27,9 +27,12 @@ def test1(request):
     return HttpResponse(papers2Json(papers))
 
 def test2(request):    
-    papers = Paper.objects.filter(catalogpaper__catalog__code="headlines") 
-    return HttpResponse(serializers.serialize("json", papers))
-    # return HttpResponse("hello")
+    user = request.session.get("user", False)
+    if user :
+        return HttpResponse(user)
+    else:
+        request.session["user"] = "anonymous";
+        return HttpResponse("user is not exists")
 
 def test3(request):    
     papers = Paper.objects.filter(catalogpaper__catalog__code="headlines") 
@@ -38,7 +41,35 @@ def test3(request):
 
 
 def getCatalogPaper(request):
-    papers = Paper.objects.filter(catalogpaper__catalog__code=request.POST["CatalogCode"]) 
+    catalogCode = request.POST["CatalogCode"]
+    papers = Paper.objects.filter(catalogpaper__catalog__code=catalogCode) 
     return HttpResponse(papers2Json(papers))
     
     
+def userLogin(request):
+    result = {}
+    phone = request.POST["phone"]
+    password = request.POST["password"]
+    user = User.objects.filter(phone=phone);
+    if user :
+        if user[0].password == password:
+            result["errcode"] = 0;
+            result["errmsg"] = "登陆成功";
+            result["data"] = {"token" :"1234567890"};
+        else :
+            result["errcode"] = -1;
+            result["errmsg"] = "密码不正确";
+    else:
+        result["errcode"] = -1;
+        result["errmsg"] = "用户不存在";      
+    return HttpResponse(json.dumps(result))
+    
+   
+    
+def userRegister(request):
+    result = {}
+    phone = request.POST["phone"]
+    password = request.POST["password"]
+    
+ 
+

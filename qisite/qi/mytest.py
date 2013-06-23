@@ -168,6 +168,7 @@ print(json.dumps(result));
 
 
 # 生成并保存session（利用SessionStore）
+'''
 from django.contrib.sessions.backends.db import SessionStore
 sessionStore = SessionStore()
 sessionStore["str"] = "hello"
@@ -178,12 +179,22 @@ sessionStore.save();
 print(sessionStore.session_key);
 print(sessionStore.keys());
 session_key = sessionStore.session_key;
+'''
 # 读取保存的session
+'''
 from django.contrib.sessions.models import Session
 session = Session.objects.get(pk=session_key)
 print(session.session_data);
 print(session.get_decoded());
 print(session.expire_date);
+'''
+
+user = User.objects.filter(phone="18900000001");
+print(user[0].phone)
+
+
+
+
 
 
 
