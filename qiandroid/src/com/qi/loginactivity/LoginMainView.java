@@ -145,7 +145,7 @@ public class LoginMainView extends RelativeLayout {
 		// button1Layout.topMargin = 5;
 		button1.setLayoutParams(button1Layout);
 		button1.setBackgroundColor(buttonColor);
-		button1.setText("µÇÂ½");
+		button1.setText("µÇÂ¼");
 		button1.setId(5);		
 		// ÉèÖÃbutton2µÄÊôÐÔ
 		RelativeLayout.LayoutParams button2Layout = new RelativeLayout.LayoutParams(getButtonWidth(), LayoutParams.FILL_PARENT);

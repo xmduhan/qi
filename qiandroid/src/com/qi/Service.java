@@ -22,6 +22,8 @@ import android.util.Log;
 public class Service {
 
 	static String server = "http://duhan.dlinkddns.com.cn:20000";
+	//static String server = "http://192.168.0.109:8080";
+	static String token = "";
 
 	static public void log(String msg) {
 		Log.println(Log.ASSERT, "assert", msg);
@@ -37,6 +39,12 @@ public class Service {
 		return url;
 	}
 
+	static public class Result {
+		public int errcode;
+		public String errmsg;
+		public Object data;
+	}
+
 	static public List<Map<String, Object>> getCatalogPaper(String catalogCode) {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		try {
@@ -48,7 +56,7 @@ public class Service {
 			// 为request添加post参数
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 			nameValuePairs.add(new BasicNameValuePair("CatalogCode", catalogCode));
-			//log("catalogCode=" + catalogCode);
+			// log("catalogCode=" + catalogCode);
 			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			// 执行并获得返回结果
 			HttpResponse httpResponse = new DefaultHttpClient().execute(request);
@@ -68,4 +76,61 @@ public class Service {
 		}
 		return list;
 	}
+
+	static public Result userLogin(String phone, String password) {
+		Result result = new Result();
+		try {
+			log("userLogin(\"" + phone + "\",\"" + password + "\")");
+			String url = Uri2Url("/qi/service/userLogin");
+			HttpPost request = new HttpPost(url);
+			// 为request添加post参数
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+			nameValuePairs.add(new BasicNameValuePair("phone", phone));
+			nameValuePairs.add(new BasicNameValuePair("password", password));
+			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			// 执行并获得返回结果
+			HttpResponse httpResponse = new DefaultHttpClient().execute(request);
+			String ret = EntityUtils.toString(httpResponse.getEntity());
+			// log(ret);
+			JSONObject jsonResult = new JSONObject(ret);
+			result.errcode = (Integer) jsonResult.get("errcode");
+			result.errmsg = (String) jsonResult.get("errmsg");
+			if (result.errcode == 0) {
+				// 如果成功读取并保存令牌
+				JSONObject jsonData = (JSONObject) jsonResult.get("data");
+				token = (String) jsonData.get("token");
+			}
+			// log(result.errmsg);
+		} catch (Exception e) {
+			result.errcode = -1;
+			result.errmsg = e.toString();
+			log("error:" + e.toString());
+		}
+		return result;
+	}
+
+	static public void isUserLogin() {
+		Result result = new Result();
+		try {
+			log("userLogin()");
+			String url = Uri2Url("/qi/service/isUserLogin");
+			HttpPost request = new HttpPost(url);
+			// 为request添加post参数
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+			nameValuePairs.add(new BasicNameValuePair("token", token));
+			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			// 执行并获得返回结果
+			HttpResponse httpResponse = new DefaultHttpClient().execute(request);
+			String ret = EntityUtils.toString(httpResponse.getEntity());
+			log(ret);
+			JSONObject jsonResult = new JSONObject(ret);
+			result.errcode = (Integer) jsonResult.get("errcode");
+			result.errmsg = (String) jsonResult.get("errmsg");
+			// result.data = (String) jsonResult.get("errmsg");
+			log(result.errmsg);
+		} catch (Exception e) {
+			log("error:" + e.toString());
+		}
+	}
+
 }

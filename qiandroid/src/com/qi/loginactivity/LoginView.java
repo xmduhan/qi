@@ -1,12 +1,17 @@
 package com.qi.loginactivity;
 
 import com.qi.Dialogs;
+import com.qi.Service;
 import com.qi.loginactivity.LoginMainView.Button1Listener;
 import com.qi.loginactivity.LoginMainView.Button2Listener;
+import com.qi.mainactivity.MainActivity;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.graphics.drawable.shapes.RoundRectShape;
@@ -64,17 +69,21 @@ public class LoginView extends RelativeLayout {
 		@Override
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
-			setButtonEnable(false);
+			// setButtonEnable(false);
+			Service.Result result = Service.userLogin(phoneEditText.getText().toString().trim(), passwordEditText.getText().toString().trim());
+			// 如果登陆成功
+			if (result.errcode == 0) {
+				// 保存用户名和密码
+				saveUserinfo();
+				// 跳转到主界面
+				Intent intent = new Intent(context, MainActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+				context.startActivity(intent);
+				// ((Activity) context).finish();
+			} else {
+				dialogs.showmessage("提示", "登录失败");
+			}
 
-			// 定义对话框
-			dialogs.showmessage("提示", "忘记密码", //
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							setButtonEnable(true);
-						}
-					}//
-			);
 		}
 	};
 
@@ -89,6 +98,7 @@ public class LoginView extends RelativeLayout {
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
+							Service.isUserLogin();
 							setButtonEnable(true);
 						}
 					}//
@@ -128,6 +138,28 @@ public class LoginView extends RelativeLayout {
 		shapeDrawable.getPaint().setStyle(Paint.Style.FILL);
 		loginForm.setBackgroundDrawable(shapeDrawable);
 		this.addView(loginForm);
+	}
+
+	public void saveUserinfo() {
+		SharedPreferences userDetails = context.getSharedPreferences("userinfo", Context.MODE_PRIVATE);
+		Editor edit = userDetails.edit();
+		edit.clear();
+		edit.putString("phone", phoneEditText.getText().toString().trim());
+		edit.putString("password", passwordEditText.getText().toString().trim());
+		edit.commit();
+	}
+
+	public void loadUserinfo() {
+		// 读取已保存的用户名密码信息
+		SharedPreferences userDetails = context.getSharedPreferences("userinfo", Context.MODE_PRIVATE);
+		String phone = userDetails.getString("phone", "");
+		String password = userDetails.getString("password", "");
+		if (!phone.equals("")) {
+			phoneEditText.setText(phone);
+			if (!password.equals("")) {
+				passwordEditText.setText(password);
+			}
+		}
 	}
 
 	public LoginView(Context context) {
@@ -209,5 +241,7 @@ public class LoginView extends RelativeLayout {
 		forgetButton.setOnClickListener(new ForgetButtonListener());
 		loginForm.addView(forgetButton);
 
+		// 读取用户名密码信息
+		loadUserinfo();
 	}
 }
