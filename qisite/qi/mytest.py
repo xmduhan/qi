@@ -181,16 +181,20 @@ print(sessionStore.keys());
 session_key = sessionStore.session_key;
 '''
 # 读取保存的session
-'''
+
 from django.contrib.sessions.models import Session
-session = Session.objects.get(pk=session_key)
+session = Session.objects.get(pk="qfba9yu1kdt5isiynvz1udxq9s3fc5c1")
 print(session.session_data);
 print(session.get_decoded());
 print(session.expire_date);
-'''
+user = session.get_decoded()['user']
+print(user)
+print(user.modify_date)
+user.state = 'A';
+user.save();
 
-user = User.objects.filter(phone="18900000001");
-print(user[0].phone)
+# user = User.objects.filter(phone="18900000001");
+# print(user[0].phone)
 
 
 

@@ -8,4 +8,6 @@ urlpatterns = patterns('',
     url(r'^service/getCatalogPaper', service.getCatalogPaper, name='getCatalogPaper'),
     url(r'^service/userLogin', service.userLogin, name='userLogin'),
     url(r'^service/userRegister', service.userRegister, name='userRegister'),
+    url(r'^service/isUserLogin', service.isUserLogin, name='isUserLogin'),
+    
 ) 
