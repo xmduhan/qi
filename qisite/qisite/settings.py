@@ -163,3 +163,8 @@ LOGGING = {
         },
     }
 }
+
+# define session expire rule
+#SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
