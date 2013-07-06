@@ -21,8 +21,8 @@ import android.util.Log;
 
 public class Service {
 
-	// static String server = "http://duhan.dlinkddns.com.cn:20000";
-	static String server = "http://192.168.0.109:8080";
+	static String server = "http://duhan.dlinkddns.com.cn:20000";
+	//static String server = "http://192.168.0.109:8080";
 	static String token = "";
 
 	static DefaultHttpClient httpClient = new DefaultHttpClient();
