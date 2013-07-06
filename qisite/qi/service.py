@@ -11,7 +11,7 @@ import json
 from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
 
-def papers2Json(papers):
+def papers2Dict(papers):
     result = []
     for paper in papers:
         p = {}
@@ -22,11 +22,11 @@ def papers2Json(papers):
         else:
             p["picture.url"] = ""
         result.append(p)
-    return json.dumps(result);
+    return result;
 
 def test1(request):    
     papers = Paper.objects.filter(catalogpaper__catalog__code="headlines") 
-    return HttpResponse(papers2Json(papers))
+    return HttpResponse(papers2Dict(papers))
 
 def test2(request):    
     user = request.session.get("user", False)
@@ -42,62 +42,67 @@ def test3(request):
     # return HttpResponse("hello")
 
 
+def isLogined (request):
+    user = request.session.get('user', False)
+    if user: 
+        return True
+    else:
+        return False
+
+def packResult(errcode=0, errmsg="", data={}):
+    result = {}
+    result["errcode"] = errcode
+    result["errmsg"] = errmsg
+    result["data"] = data 
+    return json.dumps(result)
+
+
 def getCatalogPaper(request):
-    catalogCode = request.POST["CatalogCode"]
-    papers = Paper.objects.filter(catalogpaper__catalog__code=catalogCode) 
-    return HttpResponse(papers2Json(papers))
-    
+    if isLogined(request) :  
+        catalogCode = request.POST["CatalogCode"]
+        papers = Paper.objects.filter(catalogpaper__catalog__code=catalogCode) 
+        result = packResult(data=papers2Dict(papers))
+    else :
+        result = packResult(-1, "user not logined");
+    return HttpResponse(result)
     
 def userLogin(request):
-    result = {}
     try:
         phone = request.POST["phone"]
         password = request.POST["password"]        
     except:
-        result["errcode"] = -1;
-        result["errmsg"] = "没有提供用户名或密码";        
-        return HttpResponse(json.dumps(result))
+        result = packResult(-1, "Phone Or Password Is Missed")
+        return HttpResponse(result)
     
     user = User.objects.filter(phone=phone);
     if user :
-        if user[0].password == password:
-            result["errcode"] = 0;
-            result["errmsg"] = "登录成功";            
-            request.session["user"] = user[0].id
-            request.session.save()                         
-            result["data"] = {"token" : request.session.session_key};
+        if user[0].password == password:                        
+            request.session["user"] = user[0]
+            request.session.save()
+            data = {"token" : request.session.session_key};
+            result = packResult(0, "Login Successfully" , data)
         else :
-            result["errcode"] = -1;
-            result["errmsg"] = "密码不正确";
+            result = packResult(-1, "Password Is Not Correct")
     else:
-        result["errcode"] = -1;
-        result["errmsg"] = "用户不存在";      
-    return HttpResponse(json.dumps(result))    
-   
+        result = packResult(-1, "The User Do Not Exist")
+    return HttpResponse(result)    
+ 
 
-def isUserLogin(request):
-    result = {}
-    try:
-        session_key = request.POST["token"]
-    except:
-        result["errcode"] = -1;
-        result["errmsg"] = "没有提供令牌";        
-        return HttpResponse(json.dumps(result))
-
-    session = Session.objects.filter(pk=session_key)
-    if  session :
-        result["errcode"] = 0;
-        result["errmsg"] = "已登录";
+def getCurrentUser(request):  
+    user = request.session.get('user', False)
+    if user :            
+        result = packResult(data={"id":user.id, "phone":user.phone, "token":request.session.session_key})
     else:
-        result["errcode"] = -1;
-        result["errmsg"] = "未登录";
-    return HttpResponse(json.dumps(result))
-   
+        result = packResult(-1, "user not logined");   
+    return HttpResponse(result)
+  
     
 def userRegister(request):
     result = {}
     phone = request.POST["phone"]
     password = request.POST["password"]
     
+
  
+
 

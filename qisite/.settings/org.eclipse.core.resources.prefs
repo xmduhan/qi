@@ -3,4 +3,5 @@ encoding//qi/admin.py=utf-8
 encoding//qi/models.py=utf-8
 encoding//qi/mytest.py=utf-8
 encoding//qi/service.py=utf-8
+encoding//qi/tests.py=utf-8
 encoding//school/admin.py=gb18030

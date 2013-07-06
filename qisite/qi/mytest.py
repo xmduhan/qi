@@ -182,19 +182,61 @@ session_key = sessionStore.session_key;
 '''
 # 读取保存的session
 
-from django.contrib.sessions.models import Session
-session = Session.objects.get(pk="qfba9yu1kdt5isiynvz1udxq9s3fc5c1")
-print(session.session_data);
-print(session.get_decoded());
-print(session.expire_date);
-user = session.get_decoded()['user']
-print(user)
-print(user.modify_date)
-user.state = 'A';
-user.save();
+# from django.contrib.sessions.models import Session
+# session = Session.objects.get(pk="qfba9yu1kdt5isiynvz1udxq9s3fc5c1")
+# print(session.session_data);
+# print(session.get_decoded());
+# print(session.expire_date);
+# user = session.get_decoded()['user']
+# print(user)
+# print(user.modify_date)
+# user.state = 'A';
+# user.save();
 
 # user = User.objects.filter(phone="18900000001");
 # print(user[0].phone)
+
+
+import chardet 
+
+# 进行http客户端测试
+# from django.test.utils import setup_test_environment
+# from django.test.client import Client
+# from django.core.urlresolvers import reverse
+
+# setup_test_environment()
+# client = Client() 
+
+# response = client.get('/qi/service/getCurrentUser')
+# print(response.status_code)
+# print(response.content)
+# result = eval(response.content)
+# print(result["errcode"])
+
+# print(chardet.detect(result["errmsg"]))
+
+# response = client.post('/qi/service/userLogin', {'phone': '18900000001', 'password': '123456'})
+# print(response.status_code)
+# print(response.content)
+# result = eval(response.content)
+# print(result["errcode"])
+
+# response = client.get('/qi/service/getCurrentUser')
+# print(response.status_code)
+# print(response.content)
+# result = eval(response.content)
+# print(result["errcode"])
+
+user = User.objects.get(phone="18900000001")
+userFields = dir(user)
+
+#for i in userFields :
+#    print(i, eval("type(user." + i + ")"))
+
+print(User.__mro__[0])
+
+
+
 
 
 
