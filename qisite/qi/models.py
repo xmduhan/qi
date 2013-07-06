@@ -150,6 +150,7 @@ class UserPaper(StateObject):  # 应该UserPaper/UserQuestion/UserChoice  做成
         return self.user.name + "(" + self.user.phone + ")" + self.paper.name
     user = models.ForeignKey(User, verbose_name="用户")
     paper = models.ForeignKey(Paper, verbose_name="问卷")
+    finish_state = models.CharField("完成状态", max_length=100)
     class Meta:
         verbose_name = "用户-问卷"
         verbose_name_plural = "<08>.用户-问卷" 

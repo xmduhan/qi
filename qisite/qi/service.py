@@ -15,6 +15,7 @@ def papers2Dict(papers):
     result = []
     for paper in papers:
         p = {}
+        p["id"] = paper.id
         p["name"] = paper.name
         p["description"] = paper.description
         if len(paper.picture.name) <> 0 :        
@@ -23,23 +24,6 @@ def papers2Dict(papers):
             p["picture.url"] = ""
         result.append(p)
     return result;
-
-def test1(request):    
-    papers = Paper.objects.filter(catalogpaper__catalog__code="headlines") 
-    return HttpResponse(papers2Dict(papers))
-
-def test2(request):    
-    user = request.session.get("user", False)
-    if user :
-        return HttpResponse(user)
-    else:
-        request.session["user"] = "anonymous";
-        return HttpResponse("user is not exists")
-
-def test3(request):    
-    papers = Paper.objects.filter(catalogpaper__catalog__code="headlines") 
-    return HttpResponse(serializers.serialize("json", papers))
-    # return HttpResponse("hello")
 
 
 def isLogined (request):
@@ -71,7 +55,7 @@ def userLogin(request):
         phone = request.POST["phone"]
         password = request.POST["password"]        
     except:
-        result = packResult(-1, "Phone Or Password Is Missed")
+        result = packResult(-1, "phone or password is missed")
         return HttpResponse(result)
     
     user = User.objects.filter(phone=phone);
@@ -80,11 +64,11 @@ def userLogin(request):
             request.session["user"] = user[0]
             request.session.save()
             data = {"token" : request.session.session_key};
-            result = packResult(0, "Login Successfully" , data)
+            result = packResult(0, "login successfully" , data)
         else :
-            result = packResult(-1, "Password Is Not Correct")
+            result = packResult(-1, "password is not correct")
     else:
-        result = packResult(-1, "The User Do Not Exist")
+        result = packResult(-1, "the user do not exist")
     return HttpResponse(result)    
  
 
@@ -98,11 +82,38 @@ def getCurrentUser(request):
   
     
 def userRegister(request):
-    result = {}
-    phone = request.POST["phone"]
-    password = request.POST["password"]
+    try:
+        phone = request.POST["phone"]
+        password = request.POST["password"]        
+    except:
+        result = packResult(-1, "phone or password is missed")
+        return HttpResponse(result)
     
+    user = User.objects.filter(phone=phone);
+    if user :
+        result = packResult(-1, "the user already exist")
+    else :
+        user = User(phone=phone, password=password, state="A")
+        user.save()
+        request.session["user"] = user
+        request.session.save()
+        data = {"token" : request.session.session_key};
+        result = packResult(0, "register successfully" , data)
+    return HttpResponse(result)
 
- 
+
+def getUserPaper(request):    
+    try :
+        finishState = request.POST["FinishState"]
+    except :
+        result = packResult(-1, "FinishState is missed")
+        return HttpResponse(result)
+    if isLogined(request) :  
+        user = request.session.get('user', False)
+        papers = Paper.objects.filter(userpaper__user__id=user.id, userpaper__finish_state=finishState) 
+        result = packResult(data=papers2Dict(papers))
+    else :
+        result = packResult(-1, "user not logined");
+    return HttpResponse(result)
 
 

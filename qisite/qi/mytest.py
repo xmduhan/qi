@@ -227,15 +227,17 @@ import chardet
 # result = eval(response.content)
 # print(result["errcode"])
 
-user = User.objects.get(phone="18900000001")
-userFields = dir(user)
+#user = User.objects.get(phone="18900000001")
+#userFields = dir(user)
 
 #for i in userFields :
 #    print(i, eval("type(user." + i + ")"))
 
-print(User.__mro__[0])
+#print(User.__mro__[0])
 
 
+papers = Paper.objects.filter(userpaper__user__id=1,userpaper__finish_state = "finished") 
+print(papers)
 
 
 
