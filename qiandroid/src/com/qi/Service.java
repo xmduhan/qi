@@ -21,9 +21,11 @@ import android.util.Log;
 
 public class Service {
 
-	static String server = "http://duhan.dlinkddns.com.cn:20000";
-	//static String server = "http://192.168.0.109:8080";
+	// static String server = "http://duhan.dlinkddns.com.cn:20000";
+	static String server = "http://192.168.0.109:8080";
 	static String token = "";
+
+	static DefaultHttpClient httpClient = new DefaultHttpClient();
 
 	static public void log(String msg) {
 		Log.println(Log.ASSERT, "assert", msg);
@@ -45,8 +47,9 @@ public class Service {
 		public Object data;
 	}
 
-	static public List<Map<String, Object>> getCatalogPaper(String catalogCode) {
+	static public Result getCatalogPaper(String catalogCode) {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		Result result = new Result();
 		try {
 			// 创建request变量
 			// HttpPost request = new
@@ -59,11 +62,15 @@ public class Service {
 			// log("catalogCode=" + catalogCode);
 			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			// 执行并获得返回结果
-			HttpResponse httpResponse = new DefaultHttpClient().execute(request);
+			HttpResponse httpResponse = httpClient.execute(request);
 			String ret = EntityUtils.toString(httpResponse.getEntity());
-			JSONArray r1 = new JSONArray(ret);
-			for (int i = 0; i < r1.length(); i++) {
-				JSONObject paper = (JSONObject) r1.get(i);
+			JSONObject jsonResult = new JSONObject(ret);
+
+			result.errcode = (Integer) jsonResult.get("errcode");
+			result.errmsg = (String) jsonResult.get("errmsg");
+			JSONArray jsonData = (JSONArray) jsonResult.get("data");
+			for (int i = 0; i < jsonData.length(); i++) {
+				JSONObject paper = (JSONObject) jsonData.get(i);
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("name", (String) paper.get("name"));
 				map.put("description", (String) paper.get("description"));
@@ -71,10 +78,11 @@ public class Service {
 				// log(Uri2Url((String) paper.get("picture.url")));
 				list.add(map);
 			}
+			result.data = list;
 		} catch (Exception e) {
 			log("error:" + e.toString());
 		}
-		return list;
+		return result;
 	}
 
 	static public Result userLogin(String phone, String password) {
@@ -89,7 +97,7 @@ public class Service {
 			nameValuePairs.add(new BasicNameValuePair("password", password));
 			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			// 执行并获得返回结果
-			HttpResponse httpResponse = new DefaultHttpClient().execute(request);
+			HttpResponse httpResponse = httpClient.execute(request);
 			String ret = EntityUtils.toString(httpResponse.getEntity());
 			// log(ret);
 			JSONObject jsonResult = new JSONObject(ret);
@@ -109,25 +117,29 @@ public class Service {
 		return result;
 	}
 
-	static public void isUserLogin() {
+	static public void getCurrentUser() {
 		Result result = new Result();
 		try {
-			log("userLogin()");
-			String url = Uri2Url("/qi/service/isUserLogin");
+			log("getCurrentUser():begin");
+			String url = Uri2Url("/qi/service/getCurrentUser");
 			HttpPost request = new HttpPost(url);
 			// 为request添加post参数
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-			nameValuePairs.add(new BasicNameValuePair("token", token));
+			// nameValuePairs.add(new BasicNameValuePair("token", token));
 			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			// 执行并获得返回结果
-			HttpResponse httpResponse = new DefaultHttpClient().execute(request);
+			HttpResponse httpResponse = httpClient.execute(request);
+			// HttpResponse httpResponse = new
+			// DefaultHttpClient().execute(request);
 			String ret = EntityUtils.toString(httpResponse.getEntity());
 			log(ret);
 			JSONObject jsonResult = new JSONObject(ret);
 			result.errcode = (Integer) jsonResult.get("errcode");
 			result.errmsg = (String) jsonResult.get("errmsg");
 			// result.data = (String) jsonResult.get("errmsg");
-			log(result.errmsg);
+			log("errcode:" + result.errcode);
+			log("errmsg:" + result.errmsg);
+			log("getCurrentUser():end");
 		} catch (Exception e) {
 			log("error:" + e.toString());
 		}

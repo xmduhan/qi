@@ -69,7 +69,7 @@ public class LoginView extends RelativeLayout {
 		@Override
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
-			// setButtonEnable(false);
+			//setButtonEnable(false);
 			Service.Result result = Service.userLogin(phoneEditText.getText().toString().trim(), passwordEditText.getText().toString().trim());
 			// 如果登陆成功
 			if (result.errcode == 0) {
@@ -78,12 +78,11 @@ public class LoginView extends RelativeLayout {
 				// 跳转到主界面
 				Intent intent = new Intent(context, MainActivity.class);
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				context.startActivity(intent);
-				// ((Activity) context).finish();
+				context.startActivity(intent);				
 			} else {
 				dialogs.showmessage("提示", "登录失败");
 			}
-
+			//setButtonEnable(true);
 		}
 	};
 
@@ -98,7 +97,8 @@ public class LoginView extends RelativeLayout {
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							Service.isUserLogin();
+							//Service.getCurrentUser();
+							Service.getCatalogPaper("society");
 							setButtonEnable(true);
 						}
 					}//

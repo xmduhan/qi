@@ -73,16 +73,20 @@ public class CatalogView extends RelativeLayout {
 
 		@Override
 		public void run() {
-			//
-			List<Map<String, Object>> list = Service.getCatalogPaper(catalogCode);
-			catalogAdapter = new CatalogAdapter(list, context);
-			// 设置回调
-			listview.post(new Runnable() {
-				@Override
-				public void run() {
-					listview.setAdapter(catalogAdapter);
-				}
-			});
+			// 调用获取目录数据的服务
+			Service.Result result = Service.getCatalogPaper(catalogCode);
+			if (result.errcode == 0) {
+				// 如果成功将其加载到ListView上
+				List<Map<String, Object>> list = (List<Map<String, Object>>) result.data;
+				catalogAdapter = new CatalogAdapter(list, context);
+				// 设置回调
+				listview.post(new Runnable() {
+					@Override
+					public void run() {
+						listview.setAdapter(catalogAdapter);
+					}
+				});
+			}
 		}
 	}
 
